@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface WeekendEntryProps {
   saturday: {
@@ -70,15 +70,27 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
       
       {isExpanded && (
         <div className="px-4 pb-4 space-y-2">
-          <div className={`grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_auto] gap-4 md:gap-6 p-4 rounded-md border bg-background ${saturday.skipped ? 'opacity-40' : ''}`}>
-            <div className="flex flex-col">
-              <Label className="text-sm font-medium mb-1">Saturday</Label>
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${saturday.skipped ? 'opacity-40' : ''}`}>
+            <div className="md:col-span-1 flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <Label className="text-sm font-medium">Saturday</Label>
+                <div className="flex items-center gap-1.5">
+                  <Checkbox
+                    checked={saturday.skipped}
+                    onCheckedChange={saturday.onSkipToggle}
+                    disabled={isLocked}
+                    data-testid={`checkbox-skip-${format(saturday.date, 'yyyy-MM-dd')}`}
+                    className="border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <span className="text-xs font-medium text-orange-600 dark:text-orange-400">Skip</span>
+                </div>
+              </div>
               <span className="text-sm text-muted-foreground tabular-nums">
                 {format(saturday.date, 'MMM d')}
               </span>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="md:col-span-2 grid grid-cols-2 gap-2">
               <div>
                 <Label htmlFor={`start-${format(saturday.date, 'yyyy-MM-dd')}`} className="text-sm mb-1.5">
                   Start Time
@@ -112,7 +124,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
               </div>
             </div>
             
-            <div className="flex flex-col justify-end">
+            <div className="md:col-span-1 flex flex-col justify-end">
               <Label className="text-sm mb-1.5">Hours Worked</Label>
               <div
                 className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
@@ -121,30 +133,29 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
                 {satHours} hrs
               </div>
             </div>
-            
-            <div className="flex flex-col justify-end">
-              <Button
-                variant={saturday.skipped ? "default" : "outline"}
-                size="sm"
-                onClick={saturday.onSkipToggle}
-                disabled={isLocked}
-                data-testid={`button-skip-${format(saturday.date, 'yyyy-MM-dd')}`}
-                className="h-10"
-              >
-                {saturday.skipped ? "Unskip" : "Skip"}
-              </Button>
-            </div>
           </div>
           
-          <div className={`grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_auto] gap-4 md:gap-6 p-4 rounded-md border bg-background ${sunday.skipped ? 'opacity-40' : ''}`}>
-            <div className="flex flex-col">
-              <Label className="text-sm font-medium mb-1">Sunday</Label>
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${sunday.skipped ? 'opacity-40' : ''}`}>
+            <div className="md:col-span-1 flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <Label className="text-sm font-medium">Sunday</Label>
+                <div className="flex items-center gap-1.5">
+                  <Checkbox
+                    checked={sunday.skipped}
+                    onCheckedChange={sunday.onSkipToggle}
+                    disabled={isLocked}
+                    data-testid={`checkbox-skip-${format(sunday.date, 'yyyy-MM-dd')}`}
+                    className="border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <span className="text-xs font-medium text-orange-600 dark:text-orange-400">Skip</span>
+                </div>
+              </div>
               <span className="text-sm text-muted-foreground tabular-nums">
                 {format(sunday.date, 'MMM d')}
               </span>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="md:col-span-2 grid grid-cols-2 gap-2">
               <div>
                 <Label htmlFor={`start-${format(sunday.date, 'yyyy-MM-dd')}`} className="text-sm mb-1.5">
                   Start Time
@@ -178,7 +189,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
               </div>
             </div>
             
-            <div className="flex flex-col justify-end">
+            <div className="md:col-span-1 flex flex-col justify-end">
               <Label className="text-sm mb-1.5">Hours Worked</Label>
               <div
                 className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
@@ -186,19 +197,6 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
               >
                 {sunHours} hrs
               </div>
-            </div>
-            
-            <div className="flex flex-col justify-end">
-              <Button
-                variant={sunday.skipped ? "default" : "outline"}
-                size="sm"
-                onClick={sunday.onSkipToggle}
-                disabled={isLocked}
-                data-testid={`button-skip-${format(sunday.date, 'yyyy-MM-dd')}`}
-                className="h-10"
-              >
-                {sunday.skipped ? "Unskip" : "Skip"}
-              </Button>
             </div>
           </div>
         </div>
