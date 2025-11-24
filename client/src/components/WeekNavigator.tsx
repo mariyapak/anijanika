@@ -43,7 +43,7 @@ export default function WeekNavigator({ currentWeekStart, onWeekChange }: WeekNa
         <ChevronLeft className="h-4 w-4" />
       </Button>
       
-      <h2 className="text-xl font-semibold tabular-nums" data-testid="text-week-range">
+      <h2 className="text-2xl font-heading tabular-nums" data-testid="text-week-range">
         {formatWeekRange()}
       </h2>
       

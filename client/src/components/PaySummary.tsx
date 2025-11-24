@@ -50,7 +50,7 @@ export default function PaySummary({
   return (
     <Card className="mt-8" data-testid="card-pay-summary">
       <CardHeader>
-        <CardTitle className="text-lg">Weekly Pay Summary</CardTitle>
+        <CardTitle className="text-2xl font-heading">Weekly Pay Summary</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

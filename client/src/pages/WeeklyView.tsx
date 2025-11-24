@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { startOfWeek, addDays, format, getDay } from "date-fns";
 import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
+import WeekendEntry from "@/components/WeekendEntry";
 import PaySummary from "@/components/PaySummary";
 
 interface TimeEntry {
@@ -114,10 +115,14 @@ export default function WeeklyView() {
   
   const { totalHours, daysWorked } = calculateTotals();
   
+  const weekdayDays = weekDays.slice(0, 5);
+  const saturdayDay = weekDays[5];
+  const sundayDay = weekDays[6];
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-2xl font-semibold mb-8" data-testid="text-page-title">
+        <h1 className="text-4xl font-heading mb-8" data-testid="text-page-title">
           Ani Janika
         </h1>
         
@@ -127,7 +132,7 @@ export default function WeeklyView() {
         />
         
         <div className="space-y-2" data-testid="container-week-entries">
-          {weekDays.map((day) => {
+          {weekdayDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
             const entry = timeEntries[dateKey] || { date: dateKey, startTime: '', endTime: '' };
             
@@ -142,6 +147,23 @@ export default function WeeklyView() {
               />
             );
           })}
+          
+          <WeekendEntry
+            saturday={{
+              date: saturdayDay,
+              startTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.startTime || '',
+              endTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.endTime || '',
+              onStartTimeChange: (time) => handleTimeChange(saturdayDay, 'startTime', time),
+              onEndTimeChange: (time) => handleTimeChange(saturdayDay, 'endTime', time),
+            }}
+            sunday={{
+              date: sundayDay,
+              startTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.startTime || '',
+              endTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.endTime || '',
+              onStartTimeChange: (time) => handleTimeChange(sundayDay, 'startTime', time),
+              onEndTimeChange: (time) => handleTimeChange(sundayDay, 'endTime', time),
+            }}
+          />
         </div>
         
         <PaySummary
