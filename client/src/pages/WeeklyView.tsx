@@ -176,7 +176,7 @@ export default function WeeklyView() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-12">
           <div className="flex items-start justify-between">
-            <h1 className="text-5xl md:text-6xl font-heading text-white drop-shadow-lg" data-testid="text-page-title">
+            <h1 className="text-5xl md:text-6xl font-heading bg-gradient-to-r from-orange-300 via-orange-200 to-orange-300 bg-clip-text text-transparent drop-shadow-lg" data-testid="text-page-title">
               Ani Janika
             </h1>
             <ThemeToggle />
