@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 interface DayEntryProps {
   date: Date;
@@ -46,27 +46,19 @@ export default function DayEntry({
   
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${
+      className={`grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr_auto] gap-4 md:gap-6 p-4 rounded-md border ${
         isWeekend ? 'bg-muted/30' : ''
       } ${isLocked ? 'opacity-60' : ''} ${skipped ? 'opacity-40' : ''}`}
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
     >
-      <div className="md:col-span-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-1">
-          <Checkbox
-            checked={skipped}
-            onCheckedChange={onSkipToggle}
-            disabled={isLocked}
-            data-testid={`checkbox-skip-${format(date, 'yyyy-MM-dd')}`}
-          />
-          <Label className="text-sm font-medium">{dayName}</Label>
-        </div>
+      <div className="flex flex-col">
+        <Label className="text-sm font-medium mb-1">{dayName}</Label>
         <span className="text-sm text-muted-foreground tabular-nums" data-testid={`text-date-${format(date, 'yyyy-MM-dd')}`}>
           {dateStr}
         </span>
       </div>
       
-      <div className="md:col-span-2 grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <div>
           <Label htmlFor={`start-${format(date, 'yyyy-MM-dd')}`} className="text-sm mb-1.5">
             Start Time
@@ -100,7 +92,7 @@ export default function DayEntry({
         </div>
       </div>
       
-      <div className="md:col-span-1 flex flex-col justify-end">
+      <div className="flex flex-col justify-end">
         <Label className="text-sm mb-1.5">Hours Worked</Label>
         <div
           className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
@@ -108,6 +100,19 @@ export default function DayEntry({
         >
           {hours} hrs
         </div>
+      </div>
+      
+      <div className="flex flex-col justify-end">
+        <Button
+          variant={skipped ? "default" : "outline"}
+          size="sm"
+          onClick={onSkipToggle}
+          disabled={isLocked}
+          data-testid={`button-skip-${format(date, 'yyyy-MM-dd')}`}
+          className="h-10"
+        >
+          {skipped ? "Unskip" : "Skip"}
+        </Button>
       </div>
     </div>
   );
