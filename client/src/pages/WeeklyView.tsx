@@ -116,7 +116,7 @@ export default function WeeklyView() {
 
   const unconfirmWeekMutation = useMutation({
     mutationFn: () =>
-      fetch(`/api/confirmed-weeks/${currentWeekKey}`, { method: 'DELETE' }).then(r => r.json()),
+      fetch(`/api/confirmed-weeks/${currentWeekKey}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/confirmed-weeks'] });
       toast({ title: "Week unconfirmed" });
