@@ -48,6 +48,15 @@
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem;
+  
+  /* Pastel colors for days */
+  --pastel-monday: 200 85% 90%;
+  --pastel-tuesday: 280 75% 90%;
+  --pastel-wednesday: 340 80% 90%;
+  --pastel-thursday: 35 85% 88%;
+  --pastel-friday: 160 75% 88%;
+  --pastel-weekend: 50 75% 90%;
+  
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.00);
@@ -136,6 +145,14 @@
   --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 4px 6px -1px hsl(0 0% 0% / 0.00);
   --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 8px 10px -1px hsl(0 0% 0% / 0.00);
   --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
+  
+  /* Pastel colors for days - dark mode */
+  --pastel-monday: 200 50% 20%;
+  --pastel-tuesday: 280 40% 20%;
+  --pastel-wednesday: 340 45% 20%;
+  --pastel-thursday: 35 50% 18%;
+  --pastel-friday: 160 40% 18%;
+  --pastel-weekend: 50 40% 20%;
 
 /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));

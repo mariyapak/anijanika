@@ -28,6 +28,19 @@ export default function DayEntry({
   const dateStr = format(date, 'MMM d');
   const isWeekend = dayName === 'Saturday' || dayName === 'Sunday';
   
+  const getPastelClass = () => {
+    const dayMap: Record<string, string> = {
+      'Monday': 'bg-[hsl(var(--pastel-monday))]',
+      'Tuesday': 'bg-[hsl(var(--pastel-tuesday))]',
+      'Wednesday': 'bg-[hsl(var(--pastel-wednesday))]',
+      'Thursday': 'bg-[hsl(var(--pastel-thursday))]',
+      'Friday': 'bg-[hsl(var(--pastel-friday))]',
+      'Saturday': 'bg-[hsl(var(--pastel-weekend))]',
+      'Sunday': 'bg-[hsl(var(--pastel-weekend))]',
+    };
+    return dayMap[dayName] || '';
+  };
+  
   const calculateHours = () => {
     if (!startTime || !endTime) return 0;
     
@@ -46,9 +59,7 @@ export default function DayEntry({
   
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${
-        isWeekend ? 'bg-muted/30' : ''
-      } ${isLocked ? 'opacity-60' : ''} ${skipped ? 'opacity-40' : ''}`}
+      className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${getPastelClass()} ${isLocked ? 'opacity-60' : ''} ${skipped ? 'opacity-40' : ''}`}
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
     >
       <div className="md:col-span-1 flex flex-col">

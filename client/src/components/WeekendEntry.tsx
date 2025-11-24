@@ -70,7 +70,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
       
       {isExpanded && (
         <div className="px-4 pb-4 space-y-2">
-          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${saturday.skipped ? 'opacity-40' : ''}`}>
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-[hsl(var(--pastel-weekend))] ${saturday.skipped ? 'opacity-40' : ''}`}>
             <div className="md:col-span-1 flex flex-col">
               <div className="flex items-center justify-between mb-1">
                 <Label className="text-sm font-medium">Saturday</Label>
@@ -135,7 +135,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
             </div>
           </div>
           
-          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${sunday.skipped ? 'opacity-40' : ''}`}>
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-[hsl(var(--pastel-weekend))] ${sunday.skipped ? 'opacity-40' : ''}`}>
             <div className="md:col-span-1 flex flex-col">
               <div className="flex items-center justify-between mb-1">
                 <Label className="text-sm font-medium">Sunday</Label>

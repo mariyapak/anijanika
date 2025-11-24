@@ -55,7 +55,7 @@ export default function PaySummary({
   };
   
   return (
-    <Card className="mt-8" data-testid="card-pay-summary">
+    <Card className="mt-8 bg-[hsl(var(--pastel-thursday))]" data-testid="card-pay-summary">
       <CardHeader>
         <CardTitle className="text-2xl font-heading">Weekly Pay Summary</CardTitle>
       </CardHeader>

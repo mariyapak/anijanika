@@ -169,7 +169,7 @@ export default function WeeklyView() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
         <div className="flex items-start justify-between mb-8">
-          <h1 className="text-4xl font-heading" data-testid="text-page-title">
+          <h1 className="text-4xl font-heading bg-gradient-to-r from-primary via-[hsl(var(--pastel-wednesday))] to-primary bg-clip-text text-transparent" data-testid="text-page-title">
             Ani Janika
           </h1>
           <ThemeToggle />
