@@ -52,7 +52,7 @@ export default function DayEntry({
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
     >
       <div className="md:col-span-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center justify-between mb-1">
           <Label className="text-sm font-medium">{dayName}</Label>
           <div className="flex items-center gap-1.5">
             <Checkbox
