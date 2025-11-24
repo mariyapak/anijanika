@@ -20,9 +20,10 @@ interface WeekendEntryProps {
     onStartTimeChange: (time: string) => void;
     onEndTimeChange: (time: string) => void;
   };
+  isLocked?: boolean;
 }
 
-export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
+export default function WeekendEntry({ saturday, sunday, isLocked = false }: WeekendEntryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const calculateHours = (startTime: string, endTime: string) => {
@@ -43,11 +44,12 @@ export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
   const totalWeekendHours = (Number(satHours) + Number(sunHours)).toFixed(1);
   
   return (
-    <div className="rounded-md border bg-muted/30">
+    <div className={`rounded-md border bg-muted/30 ${isLocked ? 'opacity-60' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full p-4 flex items-center justify-between hover-elevate active-elevate-2 rounded-md"
         data-testid="button-toggle-weekend"
+        disabled={isLocked}
       >
         <div className="flex items-center gap-2">
           {isExpanded ? (
@@ -84,6 +86,7 @@ export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
                   onChange={(e) => saturday.onStartTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-start-time-${format(saturday.date, 'yyyy-MM-dd')}`}
+                  disabled={isLocked}
                 />
               </div>
               
@@ -98,6 +101,7 @@ export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
                   onChange={(e) => saturday.onEndTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-end-time-${format(saturday.date, 'yyyy-MM-dd')}`}
+                  disabled={isLocked}
                 />
               </div>
             </div>
@@ -133,6 +137,7 @@ export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
                   onChange={(e) => sunday.onStartTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-start-time-${format(sunday.date, 'yyyy-MM-dd')}`}
+                  disabled={isLocked}
                 />
               </div>
               
@@ -147,6 +152,7 @@ export default function WeekendEntry({ saturday, sunday }: WeekendEntryProps) {
                   onChange={(e) => sunday.onEndTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-end-time-${format(sunday.date, 'yyyy-MM-dd')}`}
+                  disabled={isLocked}
                 />
               </div>
             </div>

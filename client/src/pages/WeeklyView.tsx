@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { startOfWeek, addDays, format, getDay } from "date-fns";
+import { Button } from "@/components/ui/button";
 import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
 import WeekendEntry from "@/components/WeekendEntry";
@@ -53,6 +54,10 @@ export default function WeeklyView() {
     initializeWeekDefaults(startOfWeek(new Date(), { weekStartsOn: 1 }))
   );
   const [hourlyRate, setHourlyRate] = useState(35);
+  const [confirmedWeeks, setConfirmedWeeks] = useState<Set<string>>(() => {
+    const stored = localStorage.getItem('confirmedWeeks');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  });
   
   useEffect(() => {
     setTimeEntries((prev) => {
@@ -70,6 +75,29 @@ export default function WeeklyView() {
       return merged;
     });
   }, [currentWeekStart]);
+  
+  useEffect(() => {
+    localStorage.setItem('confirmedWeeks', JSON.stringify(Array.from(confirmedWeeks)));
+  }, [confirmedWeeks]);
+  
+  const currentWeekKey = format(currentWeekStart, 'yyyy-MM-dd');
+  const isCurrentWeekConfirmed = confirmedWeeks.has(currentWeekKey);
+  
+  const handleConfirmWeek = () => {
+    setConfirmedWeeks((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(currentWeekKey);
+      return newSet;
+    });
+  };
+  
+  const handleUnconfirmWeek = () => {
+    setConfirmedWeeks((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(currentWeekKey);
+      return newSet;
+    });
+  };
   
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     addDays(currentWeekStart, i)
@@ -131,6 +159,33 @@ export default function WeeklyView() {
           onWeekChange={setCurrentWeekStart}
         />
         
+        <div className="mb-4 flex justify-end gap-2">
+          {isCurrentWeekConfirmed ? (
+            <>
+              <span className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-confirmed">
+                Week confirmed - entries locked
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleUnconfirmWeek}
+                data-testid="button-unconfirm-week"
+              >
+                Unlock Week
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleConfirmWeek}
+              data-testid="button-confirm-week"
+            >
+              Confirm Week
+            </Button>
+          )}
+        </div>
+        
         <div className="space-y-2" data-testid="container-week-entries">
           {weekdayDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
@@ -144,6 +199,7 @@ export default function WeeklyView() {
                 endTime={entry.endTime}
                 onStartTimeChange={(time) => handleTimeChange(day, 'startTime', time)}
                 onEndTimeChange={(time) => handleTimeChange(day, 'endTime', time)}
+                isLocked={isCurrentWeekConfirmed}
               />
             );
           })}
@@ -163,6 +219,7 @@ export default function WeeklyView() {
               onStartTimeChange: (time) => handleTimeChange(sundayDay, 'startTime', time),
               onEndTimeChange: (time) => handleTimeChange(sundayDay, 'endTime', time),
             }}
+            isLocked={isCurrentWeekConfirmed}
           />
         </div>
         

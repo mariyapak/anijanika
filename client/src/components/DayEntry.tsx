@@ -8,6 +8,7 @@ interface DayEntryProps {
   endTime: string;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
+  isLocked?: boolean;
 }
 
 export default function DayEntry({
@@ -16,6 +17,7 @@ export default function DayEntry({
   endTime,
   onStartTimeChange,
   onEndTimeChange,
+  isLocked = false,
 }: DayEntryProps) {
   const dayName = format(date, 'EEEE');
   const dateStr = format(date, 'MMM d');
@@ -41,7 +43,7 @@ export default function DayEntry({
     <div
       className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${
         isWeekend ? 'bg-muted/30' : ''
-      }`}
+      } ${isLocked ? 'opacity-60' : ''}`}
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
     >
       <div className="md:col-span-1 flex flex-col">
@@ -63,6 +65,7 @@ export default function DayEntry({
             onChange={(e) => onStartTimeChange(e.target.value)}
             className="tabular-nums"
             data-testid={`input-start-time-${format(date, 'yyyy-MM-dd')}`}
+            disabled={isLocked}
           />
         </div>
         
@@ -77,6 +80,7 @@ export default function DayEntry({
             onChange={(e) => onEndTimeChange(e.target.value)}
             className="tabular-nums"
             data-testid={`input-end-time-${format(date, 'yyyy-MM-dd')}`}
+            disabled={isLocked}
           />
         </div>
       </div>
