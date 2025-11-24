@@ -1,13 +1,16 @@
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface DayEntryProps {
   date: Date;
   startTime: string;
   endTime: string;
+  skipped?: boolean;
   onStartTimeChange: (time: string) => void;
   onEndTimeChange: (time: string) => void;
+  onSkipToggle: () => void;
   isLocked?: boolean;
 }
 
@@ -15,8 +18,10 @@ export default function DayEntry({
   date,
   startTime,
   endTime,
+  skipped = false,
   onStartTimeChange,
   onEndTimeChange,
+  onSkipToggle,
   isLocked = false,
 }: DayEntryProps) {
   const dayName = format(date, 'EEEE');
@@ -43,11 +48,19 @@ export default function DayEntry({
     <div
       className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${
         isWeekend ? 'bg-muted/30' : ''
-      } ${isLocked ? 'opacity-60' : ''}`}
+      } ${isLocked ? 'opacity-60' : ''} ${skipped ? 'opacity-40' : ''}`}
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
     >
       <div className="md:col-span-1 flex flex-col">
-        <Label className="text-sm font-medium mb-1">{dayName}</Label>
+        <div className="flex items-center gap-2 mb-1">
+          <Checkbox
+            checked={skipped}
+            onCheckedChange={onSkipToggle}
+            disabled={isLocked}
+            data-testid={`checkbox-skip-${format(date, 'yyyy-MM-dd')}`}
+          />
+          <Label className="text-sm font-medium">{dayName}</Label>
+        </div>
         <span className="text-sm text-muted-foreground tabular-nums" data-testid={`text-date-${format(date, 'yyyy-MM-dd')}`}>
           {dateStr}
         </span>
@@ -65,7 +78,8 @@ export default function DayEntry({
             onChange={(e) => onStartTimeChange(e.target.value)}
             className="tabular-nums"
             data-testid={`input-start-time-${format(date, 'yyyy-MM-dd')}`}
-            disabled={isLocked}
+            disabled={isLocked || skipped}
+            step="1800"
           />
         </div>
         
@@ -80,7 +94,8 @@ export default function DayEntry({
             onChange={(e) => onEndTimeChange(e.target.value)}
             className="tabular-nums"
             data-testid={`input-end-time-${format(date, 'yyyy-MM-dd')}`}
-            disabled={isLocked}
+            disabled={isLocked || skipped}
+            step="1800"
           />
         </div>
       </div>

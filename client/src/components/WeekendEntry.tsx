@@ -4,21 +4,26 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface WeekendEntryProps {
   saturday: {
     date: Date;
     startTime: string;
     endTime: string;
+    skipped?: boolean;
     onStartTimeChange: (time: string) => void;
     onEndTimeChange: (time: string) => void;
+    onSkipToggle: () => void;
   };
   sunday: {
     date: Date;
     startTime: string;
     endTime: string;
+    skipped?: boolean;
     onStartTimeChange: (time: string) => void;
     onEndTimeChange: (time: string) => void;
+    onSkipToggle: () => void;
   };
   isLocked?: boolean;
 }
@@ -66,9 +71,17 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
       
       {isExpanded && (
         <div className="px-4 pb-4 space-y-2">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background">
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${saturday.skipped ? 'opacity-40' : ''}`}>
             <div className="md:col-span-1 flex flex-col">
-              <Label className="text-sm font-medium mb-1">Saturday</Label>
+              <div className="flex items-center gap-2 mb-1">
+                <Checkbox
+                  checked={saturday.skipped}
+                  onCheckedChange={saturday.onSkipToggle}
+                  disabled={isLocked}
+                  data-testid={`checkbox-skip-${format(saturday.date, 'yyyy-MM-dd')}`}
+                />
+                <Label className="text-sm font-medium">Saturday</Label>
+              </div>
               <span className="text-sm text-muted-foreground tabular-nums">
                 {format(saturday.date, 'MMM d')}
               </span>
@@ -86,7 +99,8 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
                   onChange={(e) => saturday.onStartTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-start-time-${format(saturday.date, 'yyyy-MM-dd')}`}
-                  disabled={isLocked}
+                  disabled={isLocked || saturday.skipped}
+                  step="1800"
                 />
               </div>
               
@@ -101,7 +115,8 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
                   onChange={(e) => saturday.onEndTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-end-time-${format(saturday.date, 'yyyy-MM-dd')}`}
-                  disabled={isLocked}
+                  disabled={isLocked || saturday.skipped}
+                  step="1800"
                 />
               </div>
             </div>
@@ -117,9 +132,17 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background">
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border bg-background ${sunday.skipped ? 'opacity-40' : ''}`}>
             <div className="md:col-span-1 flex flex-col">
-              <Label className="text-sm font-medium mb-1">Sunday</Label>
+              <div className="flex items-center gap-2 mb-1">
+                <Checkbox
+                  checked={sunday.skipped}
+                  onCheckedChange={sunday.onSkipToggle}
+                  disabled={isLocked}
+                  data-testid={`checkbox-skip-${format(sunday.date, 'yyyy-MM-dd')}`}
+                />
+                <Label className="text-sm font-medium">Sunday</Label>
+              </div>
               <span className="text-sm text-muted-foreground tabular-nums">
                 {format(sunday.date, 'MMM d')}
               </span>
@@ -137,7 +160,8 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
                   onChange={(e) => sunday.onStartTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-start-time-${format(sunday.date, 'yyyy-MM-dd')}`}
-                  disabled={isLocked}
+                  disabled={isLocked || sunday.skipped}
+                  step="1800"
                 />
               </div>
               
@@ -152,7 +176,8 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
                   onChange={(e) => sunday.onEndTimeChange(e.target.value)}
                   className="tabular-nums"
                   data-testid={`input-end-time-${format(sunday.date, 'yyyy-MM-dd')}`}
-                  disabled={isLocked}
+                  disabled={isLocked || sunday.skipped}
+                  step="1800"
                 />
               </div>
             </div>

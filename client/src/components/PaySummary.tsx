@@ -28,8 +28,9 @@ export default function PaySummary({
   const [isEditingRate, setIsEditingRate] = useState(false);
   const [tempRate, setTempRate] = useState(String(initialRate));
   
+  const billableHours = Math.max(totalHours, 25);
   const gasReimbursement = daysWorked * 20;
-  const hourlyPay = totalHours * hourlyRate;
+  const hourlyPay = billableHours * hourlyRate;
   const totalPay = hourlyPay + gasReimbursement;
   
   const handleEditRate = () => {
@@ -67,6 +68,15 @@ export default function PaySummary({
                 {totalHours.toFixed(1)} hours
               </span>
             </div>
+            
+            {totalHours < 25 && (
+              <div className="flex justify-between items-center">
+                <Label className="text-sm text-muted-foreground">Billable Hours (min 25)</Label>
+                <span className="tabular-nums font-medium" data-testid="text-billable-hours">
+                  {billableHours.toFixed(1)} hours
+                </span>
+              </div>
+            )}
             
             <div className="flex justify-between items-center">
               <Label className="text-sm text-muted-foreground">Hourly Rate</Label>

@@ -11,6 +11,7 @@ interface TimeEntry {
   date: string;
   startTime: string;
   endTime: string;
+  skipped?: boolean;
 }
 
 const getDefaultEndTime = (date: Date): string => {
@@ -116,6 +117,18 @@ export default function WeeklyView() {
     }));
   };
   
+  const handleSkipToggle = (date: Date) => {
+    const dateKey = format(date, 'yyyy-MM-dd');
+    setTimeEntries((prev) => ({
+      ...prev,
+      [dateKey]: {
+        ...prev[dateKey],
+        date: dateKey,
+        skipped: !prev[dateKey]?.skipped,
+      },
+    }));
+  };
+  
   const calculateTotals = () => {
     let totalHours = 0;
     let daysWorked = 0;
@@ -123,6 +136,10 @@ export default function WeeklyView() {
     weekDays.forEach((day) => {
       const dateKey = format(day, 'yyyy-MM-dd');
       const entry = timeEntries[dateKey];
+      
+      if (entry?.skipped) {
+        return;
+      }
       
       if (entry?.startTime && entry?.endTime) {
         const [startHour, startMin] = entry.startTime.split(':').map(Number);
@@ -174,8 +191,10 @@ export default function WeeklyView() {
                 date={day}
                 startTime={entry.startTime}
                 endTime={entry.endTime}
+                skipped={entry.skipped}
                 onStartTimeChange={(time) => handleTimeChange(day, 'startTime', time)}
                 onEndTimeChange={(time) => handleTimeChange(day, 'endTime', time)}
+                onSkipToggle={() => handleSkipToggle(day)}
                 isLocked={isCurrentWeekConfirmed}
               />
             );
@@ -186,15 +205,19 @@ export default function WeeklyView() {
               date: saturdayDay,
               startTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.startTime || '',
               endTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.endTime || '',
+              skipped: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.skipped,
               onStartTimeChange: (time) => handleTimeChange(saturdayDay, 'startTime', time),
               onEndTimeChange: (time) => handleTimeChange(saturdayDay, 'endTime', time),
+              onSkipToggle: () => handleSkipToggle(saturdayDay),
             }}
             sunday={{
               date: sundayDay,
               startTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.startTime || '',
               endTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.endTime || '',
+              skipped: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.skipped,
               onStartTimeChange: (time) => handleTimeChange(sundayDay, 'startTime', time),
               onEndTimeChange: (time) => handleTimeChange(sundayDay, 'endTime', time),
+              onSkipToggle: () => handleSkipToggle(sundayDay),
             }}
             isLocked={isCurrentWeekConfirmed}
           />
