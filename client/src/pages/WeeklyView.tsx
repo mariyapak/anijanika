@@ -6,9 +6,14 @@ import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
 import WeekendEntry from "@/components/WeekendEntry";
 import PaySummary from "@/components/PaySummary";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import headerBg from "@assets/stock_images/warm_sunny_family_ho_bb6a331d.jpg";
+import type { TimeEntry } from "@shared/schema";
 
-interface TimeEntry {
+interface LocalTimeEntry {
+  id?: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -17,26 +22,22 @@ interface TimeEntry {
 
 const getDefaultEndTime = (date: Date): string => {
   const dayOfWeek = getDay(date);
-  // Monday (1), Wednesday (3), Friday (5) -> 1pm (13:00)
   if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
     return '13:00';
   }
-  // Tuesday (2), Thursday (4) -> 3:30pm (15:30)
   if (dayOfWeek === 2 || dayOfWeek === 4) {
     return '15:30';
   }
-  // Weekend - no default
   return '';
 };
 
-const initializeWeekDefaults = (weekStart: Date): Record<string, TimeEntry> => {
-  const entries: Record<string, TimeEntry> = {};
+const initializeWeekDefaults = (weekStart: Date): Record<string, LocalTimeEntry> => {
+  const entries: Record<string, LocalTimeEntry> = {};
   for (let i = 0; i < 7; i++) {
     const day = addDays(weekStart, i);
     const dateKey = format(day, 'yyyy-MM-dd');
     const dayOfWeek = getDay(day);
     
-    // Only set defaults for weekdays (Monday-Friday)
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       entries[dateKey] = {
         date: dateKey,
@@ -49,23 +50,105 @@ const initializeWeekDefaults = (weekStart: Date): Record<string, TimeEntry> => {
 };
 
 export default function WeeklyView() {
+  const { toast } = useToast();
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   
-  const [timeEntries, setTimeEntries] = useState<Record<string, TimeEntry>>(() =>
+  const [localEntries, setLocalEntries] = useState<Record<string, LocalTimeEntry>>(() =>
     initializeWeekDefaults(startOfWeek(new Date(), { weekStartsOn: 1 }))
   );
-  const [hourlyRate, setHourlyRate] = useState(35);
-  const [confirmedWeeks, setConfirmedWeeks] = useState<Set<string>>(() => {
-    const stored = localStorage.getItem('confirmedWeeks');
-    return stored ? new Set(JSON.parse(stored)) : new Set();
+
+  const currentWeekKey = format(currentWeekStart, 'yyyy-MM-dd');
+
+  // Fetch time entries for the week
+  const { data: entriesData = [] } = useQuery<TimeEntry[]>({
+    queryKey: ['/api/time-entries-week', currentWeekKey],
   });
-  
+
+  // Fetch confirmed weeks
+  const { data: confirmedWeeksData = [] } = useQuery<any[]>({
+    queryKey: ['/api/confirmed-weeks'],
+  });
+
+  // Fetch hourly rate
+  const { data: rateData = { rate: '35' } } = useQuery<{ rate: string }>({
+    queryKey: ['/api/hourly-rate'],
+  });
+
+  // Mutations
+  const createEntryMutation = useMutation({
+    mutationFn: (entry: LocalTimeEntry) =>
+      fetch('/api/time-entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry),
+      }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/time-entries-week', currentWeekKey] });
+    },
+  });
+
+  const updateEntryMutation = useMutation({
+    mutationFn: (entry: LocalTimeEntry & { id: string }) =>
+      fetch(`/api/time-entries/${entry.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: entry.date, startTime: entry.startTime, endTime: entry.endTime, skipped: entry.skipped }),
+      }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/time-entries-week', currentWeekKey] });
+    },
+  });
+
+  const confirmWeekMutation = useMutation({
+    mutationFn: () =>
+      fetch('/api/confirmed-weeks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weekStart: currentWeekKey }),
+      }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/confirmed-weeks'] });
+      toast({ title: "Week confirmed!" });
+    },
+  });
+
+  const unconfirmWeekMutation = useMutation({
+    mutationFn: () =>
+      fetch(`/api/confirmed-weeks/${currentWeekKey}`, { method: 'DELETE' }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/confirmed-weeks'] });
+      toast({ title: "Week unconfirmed" });
+    },
+  });
+
+  const updateRateMutation = useMutation({
+    mutationFn: (rate: number) =>
+      fetch('/api/hourly-rate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rate }),
+      }).then(r => r.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hourly-rate'] });
+    },
+  });
+
+  // Sync local state with fetched data
   useEffect(() => {
-    setTimeEntries((prev) => {
+    const newEntries = { ...localEntries };
+    entriesData.forEach(entry => {
+      newEntries[entry.date] = entry as LocalTimeEntry;
+    });
+    setLocalEntries(newEntries);
+  }, [entriesData]);
+
+  // Update week defaults when week changes
+  useEffect(() => {
+    setLocalEntries((prev) => {
       const newDefaults = initializeWeekDefaults(currentWeekStart);
-      const merged: Record<string, TimeEntry> = {};
+      const merged: Record<string, LocalTimeEntry> = {};
       
       Object.keys(newDefaults).forEach((dateKey) => {
         if (prev[dateKey]) {
@@ -78,65 +161,56 @@ export default function WeeklyView() {
       return merged;
     });
   }, [currentWeekStart]);
-  
-  useEffect(() => {
-    localStorage.setItem('confirmedWeeks', JSON.stringify(Array.from(confirmedWeeks)));
-  }, [confirmedWeeks]);
-  
-  const currentWeekKey = format(currentWeekStart, 'yyyy-MM-dd');
-  const isCurrentWeekConfirmed = confirmedWeeks.has(currentWeekKey);
-  
-  const handleConfirmWeek = () => {
-    setConfirmedWeeks((prev) => {
-      const newSet = new Set(prev);
-      newSet.add(currentWeekKey);
-      return newSet;
-    });
-  };
-  
-  const handleUnconfirmWeek = () => {
-    setConfirmedWeeks((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(currentWeekKey);
-      return newSet;
-    });
-  };
-  
+
+  const isCurrentWeekConfirmed = (confirmedWeeksData || []).some(
+    (week: any) => week.weekStart === currentWeekKey
+  );
+
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     addDays(currentWeekStart, i)
   );
-  
-  const handleTimeChange = (date: Date, field: 'startTime' | 'endTime', value: string) => {
+
+  const handleTimeChange = async (date: Date, field: 'startTime' | 'endTime', value: string) => {
     const dateKey = format(date, 'yyyy-MM-dd');
-    setTimeEntries((prev) => ({
+    const entry = localEntries[dateKey];
+    const updated = { ...entry, [field]: value };
+    
+    setLocalEntries((prev) => ({
       ...prev,
-      [dateKey]: {
-        ...prev[dateKey],
-        date: dateKey,
-        [field]: value,
-      },
+      [dateKey]: updated,
     }));
+
+    if (entry?.id) {
+      await updateEntryMutation.mutateAsync(updated as LocalTimeEntry & { id: string });
+    } else {
+      await createEntryMutation.mutateAsync(updated);
+    }
   };
-  
-  const handleSkipToggle = (date: Date) => {
+
+  const handleSkipToggle = async (date: Date) => {
     const dateKey = format(date, 'yyyy-MM-dd');
-    setTimeEntries((prev) => ({
+    const entry = localEntries[dateKey];
+    const updated = { ...entry, skipped: !entry?.skipped };
+    
+    setLocalEntries((prev) => ({
       ...prev,
-      [dateKey]: {
-        ...prev[dateKey],
-        date: dateKey,
-        skipped: !prev[dateKey]?.skipped,
-      },
+      [dateKey]: updated,
     }));
+
+    if (entry?.id) {
+      await updateEntryMutation.mutateAsync(updated as LocalTimeEntry & { id: string });
+    } else {
+      await createEntryMutation.mutateAsync(updated);
+    }
   };
-  
+
   const calculateTotals = () => {
     let totalHours = 0;
     let daysWorked = 0;
     
     weekDays.forEach((day) => {
       const dateKey = format(day, 'yyyy-MM-dd');
-      const entry = timeEntries[dateKey];
+      const entry = localEntries[dateKey];
       
       if (entry?.skipped) {
         return;
@@ -161,7 +235,7 @@ export default function WeeklyView() {
   };
   
   const { totalHours, daysWorked } = calculateTotals();
-  
+  const hourlyRate = rateData?.rate ? parseInt(rateData.rate) : 35;
   const weekdayDays = weekDays.slice(0, 5);
   const saturdayDay = weekDays[5];
   const sundayDay = weekDays[6];
@@ -184,7 +258,7 @@ export default function WeeklyView() {
         <div className="space-y-2" data-testid="container-week-entries">
           {weekdayDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
-            const entry = timeEntries[dateKey] || { date: dateKey, startTime: '', endTime: '' };
+            const entry = localEntries[dateKey] || { date: dateKey, startTime: '', endTime: '' };
             
             return (
               <DayEntry
@@ -204,18 +278,18 @@ export default function WeeklyView() {
           <WeekendEntry
             saturday={{
               date: saturdayDay,
-              startTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.startTime || '',
-              endTime: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.endTime || '',
-              skipped: timeEntries[format(saturdayDay, 'yyyy-MM-dd')]?.skipped,
+              startTime: localEntries[format(saturdayDay, 'yyyy-MM-dd')]?.startTime || '',
+              endTime: localEntries[format(saturdayDay, 'yyyy-MM-dd')]?.endTime || '',
+              skipped: localEntries[format(saturdayDay, 'yyyy-MM-dd')]?.skipped,
               onStartTimeChange: (time) => handleTimeChange(saturdayDay, 'startTime', time),
               onEndTimeChange: (time) => handleTimeChange(saturdayDay, 'endTime', time),
               onSkipToggle: () => handleSkipToggle(saturdayDay),
             }}
             sunday={{
               date: sundayDay,
-              startTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.startTime || '',
-              endTime: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.endTime || '',
-              skipped: timeEntries[format(sundayDay, 'yyyy-MM-dd')]?.skipped,
+              startTime: localEntries[format(sundayDay, 'yyyy-MM-dd')]?.startTime || '',
+              endTime: localEntries[format(sundayDay, 'yyyy-MM-dd')]?.endTime || '',
+              skipped: localEntries[format(sundayDay, 'yyyy-MM-dd')]?.skipped,
               onStartTimeChange: (time) => handleTimeChange(sundayDay, 'startTime', time),
               onEndTimeChange: (time) => handleTimeChange(sundayDay, 'endTime', time),
               onSkipToggle: () => handleSkipToggle(sundayDay),
@@ -228,10 +302,10 @@ export default function WeeklyView() {
           totalHours={totalHours}
           daysWorked={daysWorked}
           hourlyRate={hourlyRate}
-          onHourlyRateChange={setHourlyRate}
+          onHourlyRateChange={(rate) => updateRateMutation.mutate(rate)}
           isWeekConfirmed={isCurrentWeekConfirmed}
-          onConfirmWeek={handleConfirmWeek}
-          onUnconfirmWeek={handleUnconfirmWeek}
+          onConfirmWeek={() => confirmWeekMutation.mutate()}
+          onUnconfirmWeek={() => unconfirmWeekMutation.mutate()}
         />
       </div>
     </div>
