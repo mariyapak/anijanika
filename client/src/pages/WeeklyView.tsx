@@ -168,25 +168,13 @@ export default function WeeklyView() {
   
   return (
     <div className="min-h-screen bg-background">
-      <div className="relative mb-8 -mx-4 md:-mx-6 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${headerBg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
-        <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-12">
-          <div className="flex items-start justify-center">
-            <h1 className="text-5xl md:text-6xl font-heading bg-gradient-to-r from-orange-300 via-orange-200 to-orange-300 bg-clip-text text-transparent drop-shadow-lg" data-testid="text-page-title">
-              Ani Janika
-            </h1>
-            <div className="absolute top-12 right-4 md:right-6">
-              <ThemeToggle />
-            </div>
-          </div>
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
+        <div className="flex items-start justify-between mb-8">
+          <h1 className="text-5xl md:text-6xl font-heading text-primary" data-testid="text-page-title">
+            Ani Janika
+          </h1>
+          <ThemeToggle />
         </div>
-      </div>
-      
-      <div className="max-w-4xl mx-auto px-4 md:px-6 pb-8">
         
         <WeekNavigator
           currentWeekStart={currentWeekStart}
