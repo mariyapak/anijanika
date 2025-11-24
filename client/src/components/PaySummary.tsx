@@ -151,7 +151,7 @@ export default function PaySummary({
               {isWeekConfirmed ? (
                 <>
                   <span className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-confirmed">
-                    Week confirmed
+                    Week confirmed - entries locked
                   </span>
                   <Button
                     variant="outline"
