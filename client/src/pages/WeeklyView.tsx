@@ -6,6 +6,7 @@ import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
 import WeekendEntry from "@/components/WeekendEntry";
 import PaySummary from "@/components/PaySummary";
+import headerBg from "@assets/stock_images/warm_sunny_family_ho_bb6a331d.jpg";
 
 interface TimeEntry {
   date: string;
@@ -167,13 +168,23 @@ export default function WeeklyView() {
   
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
-        <div className="flex items-start justify-between mb-8">
-          <h1 className="text-4xl font-heading bg-gradient-to-r from-primary via-[hsl(var(--pastel-wednesday))] to-primary bg-clip-text text-transparent" data-testid="text-page-title">
-            Ani Janika
-          </h1>
-          <ThemeToggle />
+      <div className="relative mb-8 -mx-4 md:-mx-6 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${headerBg})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-12">
+          <div className="flex items-start justify-between">
+            <h1 className="text-5xl md:text-6xl font-heading text-white drop-shadow-lg" data-testid="text-page-title">
+              Ani Janika
+            </h1>
+            <ThemeToggle />
+          </div>
         </div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pb-8">
         
         <WeekNavigator
           currentWeekStart={currentWeekStart}
