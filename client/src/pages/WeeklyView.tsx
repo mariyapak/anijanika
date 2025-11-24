@@ -148,9 +148,9 @@ export default function WeeklyView() {
   const sundayDay = weekDays[6];
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-[#E8B89A] via-[#DDA788] to-[#D89B7D]">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-4xl font-heading mb-8" data-testid="text-page-title">
+        <h1 className="text-4xl font-heading mb-8 text-gray-900" data-testid="text-page-title">
           Ani Janika
         </h1>
         
