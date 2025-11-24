@@ -270,7 +270,7 @@ export default function WeeklyView() {
                 onStartTimeChange={(time) => handleTimeChange(day, 'startTime', time)}
                 onEndTimeChange={(time) => handleTimeChange(day, 'endTime', time)}
                 onSkipToggle={() => handleSkipToggle(day)}
-                isLocked={isCurrentWeekConfirmed}
+                isLocked={false}
               />
             );
           })}
@@ -294,7 +294,7 @@ export default function WeeklyView() {
               onEndTimeChange: (time) => handleTimeChange(sundayDay, 'endTime', time),
               onSkipToggle: () => handleSkipToggle(sundayDay),
             }}
-            isLocked={isCurrentWeekConfirmed}
+            isLocked={false}
           />
         </div>
         
