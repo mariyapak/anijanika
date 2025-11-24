@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { startOfWeek, addDays, format, getDay } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
 import WeekendEntry from "@/components/WeekendEntry";
@@ -150,9 +151,12 @@ export default function WeeklyView() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
-        <h1 className="text-4xl font-heading mb-8" data-testid="text-page-title">
-          Ani Janika
-        </h1>
+        <div className="flex items-start justify-between mb-8">
+          <h1 className="text-4xl font-heading" data-testid="text-page-title">
+            Ani Janika
+          </h1>
+          <ThemeToggle />
+        </div>
         
         <WeekNavigator
           currentWeekStart={currentWeekStart}
