@@ -39,7 +39,7 @@ export default function DayEntry({
   
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6 p-4 rounded-md border ${
+      className={`grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 p-4 rounded-md border ${
         isWeekend ? 'bg-muted/30' : ''
       }`}
       data-testid={`day-entry-${format(date, 'yyyy-MM-dd')}`}
@@ -88,16 +88,6 @@ export default function DayEntry({
           data-testid={`text-hours-${format(date, 'yyyy-MM-dd')}`}
         >
           {hours} hrs
-        </div>
-      </div>
-      
-      <div className="md:col-span-2 flex flex-col justify-end">
-        <Label className="text-sm mb-1.5">Daily Pay</Label>
-        <div
-          className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
-          data-testid={`text-pay-${format(date, 'yyyy-MM-dd')}`}
-        >
-          {hasWorked ? `$${(Number(hours) * 35 + 20).toFixed(2)}` : '$0.00'}
         </div>
       </div>
     </div>

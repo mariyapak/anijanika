@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { startOfWeek, addDays, format } from "date-fns";
+import { startOfWeek, addDays, format, getDay } from "date-fns";
 import WeekNavigator from "@/components/WeekNavigator";
 import DayEntry from "@/components/DayEntry";
 import PaySummary from "@/components/PaySummary";
@@ -10,13 +10,65 @@ interface TimeEntry {
   endTime: string;
 }
 
+const getDefaultEndTime = (date: Date): string => {
+  const dayOfWeek = getDay(date);
+  // Monday (1), Wednesday (3), Friday (5) -> 1pm (13:00)
+  if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
+    return '13:00';
+  }
+  // Tuesday (2), Thursday (4) -> 3:30pm (15:30)
+  if (dayOfWeek === 2 || dayOfWeek === 4) {
+    return '15:30';
+  }
+  // Weekend - no default
+  return '';
+};
+
+const initializeWeekDefaults = (weekStart: Date): Record<string, TimeEntry> => {
+  const entries: Record<string, TimeEntry> = {};
+  for (let i = 0; i < 7; i++) {
+    const day = addDays(weekStart, i);
+    const dateKey = format(day, 'yyyy-MM-dd');
+    const dayOfWeek = getDay(day);
+    
+    // Only set defaults for weekdays (Monday-Friday)
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      entries[dateKey] = {
+        date: dateKey,
+        startTime: '08:30',
+        endTime: getDefaultEndTime(day),
+      };
+    }
+  }
+  return entries;
+};
+
 export default function WeeklyView() {
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
   
-  const [timeEntries, setTimeEntries] = useState<Record<string, TimeEntry>>({});
+  const [timeEntries, setTimeEntries] = useState<Record<string, TimeEntry>>(() =>
+    initializeWeekDefaults(startOfWeek(new Date(), { weekStartsOn: 1 }))
+  );
   const [hourlyRate, setHourlyRate] = useState(35);
+  
+  useEffect(() => {
+    setTimeEntries((prev) => {
+      const newDefaults = initializeWeekDefaults(currentWeekStart);
+      const merged: Record<string, TimeEntry> = {};
+      
+      Object.keys(newDefaults).forEach((dateKey) => {
+        if (prev[dateKey]) {
+          merged[dateKey] = prev[dateKey];
+        } else {
+          merged[dateKey] = newDefaults[dateKey];
+        }
+      });
+      
+      return merged;
+    });
+  }, [currentWeekStart]);
   
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     addDays(currentWeekStart, i)
@@ -66,7 +118,7 @@ export default function WeeklyView() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
         <h1 className="text-2xl font-semibold mb-8" data-testid="text-page-title">
-          Nanny Hours Tracker
+          Ani Janika
         </h1>
         
         <WeekNavigator
