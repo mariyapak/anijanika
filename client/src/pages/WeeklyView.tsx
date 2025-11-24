@@ -159,33 +159,6 @@ export default function WeeklyView() {
           onWeekChange={setCurrentWeekStart}
         />
         
-        <div className="mb-4 flex justify-end gap-2">
-          {isCurrentWeekConfirmed ? (
-            <>
-              <span className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-confirmed">
-                Week confirmed - entries locked
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleUnconfirmWeek}
-                data-testid="button-unconfirm-week"
-              >
-                Unlock Week
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleConfirmWeek}
-              data-testid="button-confirm-week"
-            >
-              Confirm Week
-            </Button>
-          )}
-        </div>
-        
         <div className="space-y-2" data-testid="container-week-entries">
           {weekdayDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
@@ -228,6 +201,9 @@ export default function WeeklyView() {
           daysWorked={daysWorked}
           hourlyRate={hourlyRate}
           onHourlyRateChange={setHourlyRate}
+          isWeekConfirmed={isCurrentWeekConfirmed}
+          onConfirmWeek={handleConfirmWeek}
+          onUnconfirmWeek={handleUnconfirmWeek}
         />
       </div>
     </div>

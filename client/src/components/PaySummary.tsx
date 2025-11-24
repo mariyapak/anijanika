@@ -10,6 +10,9 @@ interface PaySummaryProps {
   daysWorked: number;
   hourlyRate?: number;
   onHourlyRateChange?: (rate: number) => void;
+  isWeekConfirmed?: boolean;
+  onConfirmWeek?: () => void;
+  onUnconfirmWeek?: () => void;
 }
 
 export default function PaySummary({
@@ -17,6 +20,9 @@ export default function PaySummary({
   daysWorked,
   hourlyRate: initialRate = 35,
   onHourlyRateChange,
+  isWeekConfirmed = false,
+  onConfirmWeek,
+  onUnconfirmWeek,
 }: PaySummaryProps) {
   const [hourlyRate, setHourlyRate] = useState(initialRate);
   const [isEditingRate, setIsEditingRate] = useState(false);
@@ -122,11 +128,42 @@ export default function PaySummary({
           </div>
         </div>
         
-        <div className="mt-6 pt-6 border-t flex justify-between items-center">
-          <Label className="text-lg font-semibold">Total Weekly Pay</Label>
-          <span className="text-2xl font-bold tabular-nums" data-testid="text-total-pay">
-            ${totalPay.toFixed(2)}
-          </span>
+        <div className="mt-6 pt-6 border-t">
+          <div className="flex justify-between items-center mb-4">
+            <Label className="text-lg font-semibold">Total Weekly Pay</Label>
+            <span className="text-2xl font-bold tabular-nums" data-testid="text-total-pay">
+              ${totalPay.toFixed(2)}
+            </span>
+          </div>
+          
+          {onConfirmWeek && onUnconfirmWeek && (
+            <div className="flex justify-end gap-2 mt-4">
+              {isWeekConfirmed ? (
+                <>
+                  <span className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-confirmed">
+                    Week confirmed - entries locked
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onUnconfirmWeek}
+                    data-testid="button-unconfirm-week"
+                  >
+                    Unlock Week
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={onConfirmWeek}
+                  data-testid="button-confirm-week"
+                >
+                  Confirm Week
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
