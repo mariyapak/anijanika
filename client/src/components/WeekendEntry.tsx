@@ -125,7 +125,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
             </div>
             
             <div className="md:col-span-1 flex flex-col justify-end">
-              <Label className="text-sm mb-1.5">Hours Worked</Label>
+              <Label className="text-sm mb-1.5">Hours</Label>
               <div
                 className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
                 data-testid={`text-hours-${format(saturday.date, 'yyyy-MM-dd')}`}
@@ -190,7 +190,7 @@ export default function WeekendEntry({ saturday, sunday, isLocked = false }: Wee
             </div>
             
             <div className="md:col-span-1 flex flex-col justify-end">
-              <Label className="text-sm mb-1.5">Hours Worked</Label>
+              <Label className="text-sm mb-1.5">Hours</Label>
               <div
                 className="h-10 flex items-center px-3 rounded-md bg-muted/50 tabular-nums font-medium"
                 data-testid={`text-hours-${format(sunday.date, 'yyyy-MM-dd')}`}
