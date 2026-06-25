@@ -18,7 +18,7 @@ interface PaySummaryProps {
 export default function PaySummary({
   totalHours,
   daysWorked,
-  hourlyRate: initialRate = 35,
+  hourlyRate: initialRate = 40,
   onHourlyRateChange,
   isWeekConfirmed = false,
   onConfirmWeek,
