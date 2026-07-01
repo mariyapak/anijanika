@@ -26,7 +26,7 @@ const getDefaultEndTime = (date: Date): string => {
     return '13:00';
   }
   if (dayOfWeek === 2 || dayOfWeek === 4) {
-    return '15:30';
+    return '15:00';
   }
   return '';
 };
