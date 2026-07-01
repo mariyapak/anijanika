@@ -41,7 +41,7 @@ const initializeWeekDefaults = (weekStart: Date): Record<string, LocalTimeEntry>
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       entries[dateKey] = {
         date: dateKey,
-        startTime: '08:30',
+        startTime: '08:00',
         endTime: getDefaultEndTime(day),
       };
     }
