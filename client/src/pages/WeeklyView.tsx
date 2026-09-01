@@ -72,7 +72,7 @@ export default function WeeklyView() {
   });
 
   // Fetch hourly rate
-  const { data: rateData = { rate: '35' } } = useQuery<{ rate: string }>({
+  const { data: rateData = { rate: '40' } } = useQuery<{ rate: string }>({
     queryKey: ['/api/hourly-rate'],
   });
 
@@ -235,7 +235,7 @@ export default function WeeklyView() {
   };
   
   const { totalHours, daysWorked } = calculateTotals();
-  const hourlyRate = rateData?.rate ? parseInt(rateData.rate) : 35;
+  const hourlyRate = rateData?.rate ? parseInt(rateData.rate) : 40;
   const weekdayDays = weekDays.slice(0, 5);
   const saturdayDay = weekDays[5];
   const sundayDay = weekDays[6];
