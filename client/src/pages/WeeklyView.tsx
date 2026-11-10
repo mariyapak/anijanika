@@ -22,10 +22,10 @@ interface LocalTimeEntry {
 
 const getDefaultEndTime = (date: Date): string => {
   const dayOfWeek = getDay(date);
-  if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
+  if (dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5) {
     return '13:00';
   }
-  if (dayOfWeek === 2 || dayOfWeek === 4) {
+  if (dayOfWeek === 1 || dayOfWeek === 2) {
     return '15:00';
   }
   return '';
